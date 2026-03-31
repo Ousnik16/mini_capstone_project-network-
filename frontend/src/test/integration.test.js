@@ -1,11 +1,7 @@
 import { describe, it, expect, beforeEach} from 'vitest';
 
-/**
- * Integration Test Example
- * 
- * This demonstrates how to test complete user flows and interactions
- * across multiple components and services.
- */
+
+
 
 describe('Authentication Flow Integration', () => {
   beforeEach(() => {
@@ -15,20 +11,20 @@ describe('Authentication Flow Integration', () => {
   });
 
   it('should handle a complete login flow', () => {
-    // Simulate user credentials
+
     const userCredentials = {
       email: 'test@example.com',
       password: 'password123'
     };
 
-    // After successful login, these should be stored
+
     localStorage.setItem('user', JSON.stringify({
       email: userCredentials.email,
       role: 'customer'
     }));
     localStorage.setItem('access_token', 'mocked-jwt-token');
 
-    // Verify localStorage was called correctly
+
     expect(localStorage.setItem).toHaveBeenCalledWith(
       'user',
       expect.stringContaining('test@example.com')
@@ -40,18 +36,18 @@ describe('Authentication Flow Integration', () => {
   });
 
   it('should handle logout and clear storage', () => {
-    // Setup: User is logged in
+
     localStorage.setItem('user', JSON.stringify({
       email: 'test@example.com',
       role: 'customer'
     }));
     localStorage.setItem('access_token', 'mocked-jwt-token');
 
-    // Logout: Remove stored data
+
     localStorage.removeItem('user');
     localStorage.removeItem('access_token');
 
-    // Verify cleanup
+
     expect(localStorage.removeItem).toHaveBeenCalledWith('user');
     expect(localStorage.removeItem).toHaveBeenCalledWith('access_token');
   });
@@ -63,18 +59,18 @@ describe('Authentication Flow Integration', () => {
     };
     const storedToken = 'persisted-jwt-token';
 
-    // Mock localStorage returning stored values
+
     localStorage.getItem.mockImplementation((key) => {
       if (key === 'user') return JSON.stringify(storedUser);
       if (key === 'access_token') return storedToken;
       return null;
     });
 
-    // App loads and checks for existing session
+
     const retrievedUser = localStorage.getItem('user');
     const retrievedToken = localStorage.getItem('access_token');
 
-    // Verify session was restored
+
     expect(JSON.parse(retrievedUser)).toEqual(storedUser);
     expect(retrievedToken).toBe(storedToken);
   });
@@ -83,7 +79,7 @@ describe('Authentication Flow Integration', () => {
     const requiredRole = 'admin';
     const userRoles = ['customer', 'engineer', 'admin'];
 
-    // Check each role
+
     userRoles.forEach((role) => {
       const isAuthorized = role === requiredRole;
       expect(isAuthorized).toBe(role === 'admin');
@@ -91,13 +87,13 @@ describe('Authentication Flow Integration', () => {
   });
 
   it('should handle token validation errors gracefully', () => {
-    // Malformed token
+
     const invalidToken = 'invalid.token';
 
-    // Should not throw, but return null or default
+
     try {
       const parts = invalidToken.split('.');
-      expect(parts.length).not.toBe(3); // Invalid JWT format
+      expect(parts.length).not.toBe(3);       expect(parts.length).not.toBe(3);
     } catch (error) {
       expect(error).toBeDefined();
     }
@@ -106,14 +102,14 @@ describe('Authentication Flow Integration', () => {
 
 describe('Ticket Management Flow', () => {
   it('should handle complete ticket creation and resolution flow', () => {
-    // Step 1: Create a ticket
+
     const ticketData = {
       title: 'Network Issue',
       description: 'Connection problems',
       severity: 'high'
     };
 
-    // Step 2: Simulate ticket creation
+
     const createdTicket = {
       id: 1,
       ...ticketData,
@@ -124,7 +120,7 @@ describe('Ticket Management Flow', () => {
     expect(createdTicket).toBeDefined();
     expect(createdTicket.status).toBe('open');
 
-    // Step 3: Simulate assignment to engineer
+
     const assignedTicket = {
       ...createdTicket,
       assigned_to: 'engineer@example.com'
@@ -132,7 +128,7 @@ describe('Ticket Management Flow', () => {
 
     expect(assignedTicket.assigned_to).toBeDefined();
 
-    // Step 4: Simulate resolution
+
     const resolvedTicket = {
       ...assignedTicket,
       status: 'resolved',
@@ -162,10 +158,10 @@ describe('API Error Handling Integration', () => {
       message: 'Unauthorized'
     };
 
-    // Simulate error response
+
     const handleApiError = (error) => {
       if (error.status === 401) {
-        // Clear auth data
+
         localStorage.removeItem('access_token');
         localStorage.removeItem('user');
         return 'redirected to login';
@@ -186,7 +182,7 @@ describe('API Error Handling Integration', () => {
       if (retries >= maxRetries) {
         throw new Error('Max retries exceeded');
       }
-      // Simulate successful call on third attempt
+
       if (attemptCount >= 3) {
         return { success: true };
       }

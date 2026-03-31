@@ -4,7 +4,7 @@ import { decodeJWT, extractUserFromToken } from '../utils/tokenUtils';
 describe('tokenUtils', () => {
   describe('decodeJWT', () => {
     it('should decode a valid JWT token', () => {
-      // Create a valid JWT token (header.payload.signature)
+
       const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
       const payload = btoa(JSON.stringify({ role: 'admin', email: 'test@example.com' }));
       const signature = 'fakesignature';

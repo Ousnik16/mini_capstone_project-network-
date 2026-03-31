@@ -15,12 +15,12 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Public routes */}
+{}
       <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login />} />
       <Route path="/register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
-      {/* Protected routes */}
+{}
       <Route
         path="/customer/dashboard"
         element={
@@ -46,7 +46,7 @@ function AppRoutes() {
         }
       />
 
-      {/* Default redirects */}
+{}
       <Route
         path="/"
         element={
@@ -58,7 +58,7 @@ function AppRoutes() {
         }
       />
 
-      {/* 404 */}
+{}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

@@ -1,4 +1,4 @@
-// Utility function to decode JWT token and extract payload
+
 export const decodeJWT = (token) => {
   try {
     const parts = token.split('.');
@@ -13,7 +13,7 @@ export const decodeJWT = (token) => {
   }
 };
 
-// Extract user info from JWT payload
+
 export const extractUserFromToken = (token, email) => {
   const payload = decodeJWT(token);
   if (!payload) {

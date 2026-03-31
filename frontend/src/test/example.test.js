@@ -1,11 +1,7 @@
 import { describe, it, expect,vi } from 'vitest';
 
-/**
- * Example Test Suite
- * 
- * This file demonstrates the basic structure and patterns used in the test suite.
- * Copy and adapt these patterns when writing new tests.
- */
+
+
 
 describe('Example Test Suite', () => {
   describe('Basic Assertions', () => {

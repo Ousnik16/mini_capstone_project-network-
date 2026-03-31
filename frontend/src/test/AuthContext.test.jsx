@@ -3,7 +3,7 @@ import { render, screen} from '@testing-library/react';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import React from 'react';
 
-// Test component that uses the auth hook
+
 const TestComponent = () => {
   const { user, token, isAuthenticated, login, logout, register } = useAuth();
   return (
@@ -77,7 +77,7 @@ describe('AuthContext', () => {
   });
 
   it('should call useAuth context', () => {
-    // Reset localStorage mock
+
     localStorage.getItem.mockClear();
     localStorage.getItem.mockReturnValue(null);
 

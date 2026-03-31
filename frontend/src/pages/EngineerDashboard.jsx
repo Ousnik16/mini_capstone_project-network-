@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+
 import React, { useState, useEffect } from 'react';
 import { engineerAPI, ticketAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -21,7 +21,7 @@ export const EngineerDashboard = () => {
       const response = await engineerAPI.getEngineerTickets();
       setTickets(response.data);
       setError('');
-    // eslint-disable-next-line no-unused-vars
+
     } catch (err) {
       setError('Failed to fetch tickets');
     } finally {

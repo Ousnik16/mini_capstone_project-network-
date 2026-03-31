@@ -323,3 +323,161 @@
     flex-wrap: wrap;
   }
 }
+
+/* Network Management Styles */
+.networks-list {
+  margin-top: 30px;
+}
+
+.networks-list h3 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.network-card {
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.network-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.network-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.network-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+}
+
+.status.active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status.down {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status.maintenance {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.network-card p {
+  margin: 8px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.btn-edit {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.btn-edit:hover {
+  background-color: #1976d2;
+}
+
+.network-edit-form {
+  background-color: white;
+  border: 2px solid #667eea;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.network-edit-form h4 {
+  margin-top: 0;
+  color: #333;
+}
+
+.network-edit-form .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.network-edit-form label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.network-edit-form input,
+.network-edit-form select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.network-edit-form input:focus,
+.network-edit-form select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-save {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  flex: 1;
+}
+
+.btn-save:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.btn-save:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  flex: 1;
+}
+
+.btn-cancel:hover {
+  background-color: #da190b;
+}

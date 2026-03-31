@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class NetworkCreateRequest(BaseModel):
@@ -8,7 +9,12 @@ class NetworkCreateRequest(BaseModel):
 
 
 class NetworkUpdateRequest(BaseModel):
-    status: str
+    tower_id: Optional[str] = None
+    location: Optional[str] = None
+    status: Optional[str] = None
+
+    class Config:
+        pass
 
 
 class NetworkResponse(BaseModel):

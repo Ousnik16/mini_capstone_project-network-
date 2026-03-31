@@ -1,7 +1,7 @@
-/* eslint-disable no-unused-vars */
+
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
-// Mock axios before importing api
+
 vi.mock('axios', () => ({
   default: {
     create: vi.fn(() => ({

@@ -22,12 +22,12 @@ export const Login = () => {
       const response = await authAPI.login({ email, password });
       const { access_token } = response.data;
       
-      // Extract user data from JWT token
+
       const userData = extractUserFromToken(access_token, email);
       
       login(userData, access_token);
       
-      // Redirect based on role
+
       if (userData.role === 'admin') {
         navigate('/admin/dashboard');
       } else if (userData.role === 'engineer') {

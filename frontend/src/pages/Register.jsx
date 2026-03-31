@@ -10,7 +10,7 @@ export const Register = () => {
     name: '',
     email: '',
     password: '',
-    role: 'customer', // default role
+    role: 'customer',     role: 'customer',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,10 +28,10 @@ export const Register = () => {
     setLoading(true);
 
     try {
-      // Register user
+
       const registerResponse = await authAPI.register(formData);
       
-      // After registration, login to get token
+
       const loginResponse = await authAPI.login({
         email: formData.email,
         password: formData.password,
@@ -39,13 +39,13 @@ export const Register = () => {
       
       const { access_token } = loginResponse.data;
       
-      // Extract user data with role from token
+
       const userData = extractUserFromToken(access_token, formData.email);
-      userData.name = formData.name; // Add name from form
+      userData.name = formData.name;       userData.name = formData.name;
       
       login(userData, access_token);
       
-      // Redirect based on role
+
       if (formData.role === 'admin') {
         navigate('/admin/dashboard');
       } else if (formData.role === 'engineer') {

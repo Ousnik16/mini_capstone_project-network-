@@ -25,7 +25,7 @@ export const CustomerDashboard = () => {
       const response = await ticketAPI.getMyTickets();
       setTickets(response.data);
       setError('');
-    // eslint-disable-next-line no-unused-vars
+
     } catch (err) {
       setError('Failed to fetch tickets');
     } finally {
@@ -48,7 +48,7 @@ export const CustomerDashboard = () => {
       setShowCreateForm(false);
       await fetchTickets();
       setError('');
-    // eslint-disable-next-line no-unused-vars
+
     } catch (err) {
       setError('Failed to create ticket');
     } finally {

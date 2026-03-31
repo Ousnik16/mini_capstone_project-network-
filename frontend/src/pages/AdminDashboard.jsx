@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+
 import React, { useState, useEffect } from 'react';
 import { ticketAPI, adminAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,17 +12,24 @@ export const AdminDashboard = () => {
   const [error, setError] = useState('');
   const { logout } = useAuth();
   
-  // Assign ticket state
+
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [engineerId, setEngineerId] = useState('');
   const [assigning, setAssigning] = useState(false);
 
-  // Network state
+
   const [showNetworkForm, setShowNetworkForm] = useState(false);
   const [networkFormData, setNetworkFormData] = useState({
     tower_id: '',
     location: '',
     status: 'active',
+  });
+  const [networks, setNetworks] = useState([]);
+  const [editingNetworkId, setEditingNetworkId] = useState(null);
+  const [editingNetworkData, setEditingNetworkData] = useState({
+    tower_id: '',
+    location: '',
+    status: '',
   });
 
   useEffect(() => {
@@ -30,6 +37,8 @@ export const AdminDashboard = () => {
       fetchTickets();
     } else if (activeTab === 'reports') {
       fetchReports();
+    } else if (activeTab === 'network') {
+      fetchNetworks();
     }
   }, [activeTab]);
 
@@ -54,6 +63,20 @@ export const AdminDashboard = () => {
       setError('');
     } catch (err) {
       setError('Failed to fetch reports');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchNetworks = async () => {
+    setLoading(true);
+    try {
+      const response = await adminAPI.getNetworks?.() || { data: [] };
+      setNetworks(response.data || []);
+      setError('');
+    } catch (err) {
+
+      setNetworks([]);
     } finally {
       setLoading(false);
     }
@@ -92,9 +115,50 @@ export const AdminDashboard = () => {
       await adminAPI.createNetwork(networkFormData);
       setNetworkFormData({ tower_id: '', location: '', status: 'active' });
       setShowNetworkForm(false);
+      await fetchNetworks();
       setError('');
     } catch (err) {
       setError('Failed to create network node');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditNetwork = (network) => {
+    setEditingNetworkId(network.id);
+    setEditingNetworkData({
+      tower_id: network.tower_id,
+      location: network.location,
+      status: network.status,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingNetworkId(null);
+    setEditingNetworkData({ tower_id: '', location: '', status: '' });
+  };
+
+  const handleUpdateNetworkChange = (e) => {
+    const { name, value } = e.target;
+    setEditingNetworkData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleUpdateNetwork = async (networkId) => {
+    setLoading(true);
+    try {
+
+      const updateData = {};
+      if (editingNetworkData.tower_id) updateData.tower_id = editingNetworkData.tower_id;
+      if (editingNetworkData.location) updateData.location = editingNetworkData.location;
+      if (editingNetworkData.status) updateData.status = editingNetworkData.status;
+
+      await adminAPI.updateNetwork(networkId, updateData);
+      await fetchNetworks();
+      handleCancelEdit();
+      setError('');
+    } catch (err) {
+      setError('Failed to update network node');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -276,7 +340,7 @@ export const AdminDashboard = () => {
                       onChange={handleNetworkChange}
                     >
                       <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
+                      <option value="down">Down</option>
                       <option value="maintenance">Maintenance</option>
                     </select>
                   </div>
@@ -286,6 +350,90 @@ export const AdminDashboard = () => {
                 </form>
               </div>
             )}
+
+            <div className="networks-list">
+              <h3>Network Nodes</h3>
+              {loading && !networks.length ? (
+                <p>Loading network nodes...</p>
+              ) : networks.length === 0 ? (
+                <p>No network nodes.</p>
+              ) : (
+                networks.map(network => (
+                  <div key={network.id} className="network-card">
+                    {editingNetworkId === network.id ? (
+                      <div className="network-edit-form">
+                        <h4>Edit Network Node</h4>
+                        <div className="form-group">
+                          <label>Tower ID</label>
+                          <input
+                            type="text"
+                            name="tower_id"
+                            value={editingNetworkData.tower_id}
+                            onChange={handleUpdateNetworkChange}
+                            placeholder="Tower ID"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Location</label>
+                          <input
+                            type="text"
+                            name="location"
+                            value={editingNetworkData.location}
+                            onChange={handleUpdateNetworkChange}
+                            placeholder="Location"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Status</label>
+                          <select
+                            name="status"
+                            value={editingNetworkData.status}
+                            onChange={handleUpdateNetworkChange}
+                          >
+                            <option value="">No change</option>
+                            <option value="active">Active</option>
+                            <option value="down">Down</option>
+                            <option value="maintenance">Maintenance</option>
+                          </select>
+                        </div>
+                        <div className="form-actions">
+                          <button
+                            onClick={() => handleUpdateNetwork(network.id)}
+                            disabled={loading}
+                            className="btn-save"
+                          >
+                            {loading ? 'Saving...' : 'Save'}
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="btn-cancel"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="network-header">
+                          <h4>{network.tower_id}</h4>
+                          <span className={`status ${network.status}`}>
+                            {network.status}
+                          </span>
+                        </div>
+                        <p><strong>Location:</strong> {network.location}</p>
+                        <p><strong>ID:</strong> {network.id}</p>
+                        <button
+                          onClick={() => handleEditNetwork(network)}
+                          className="btn-edit"
+                        >
+                          Edit
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
           </section>
         )}
       </div>

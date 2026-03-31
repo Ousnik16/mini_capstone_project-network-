@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('access_token'));
 
   useEffect(() => {
-    // Try to restore user session from localStorage
+
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('access_token');
     
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
