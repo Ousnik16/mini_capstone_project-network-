@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.controllers.admin_controller import router as admin_router
 from app.controllers.assignment_controller import router as assignment_router
@@ -22,10 +23,28 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(title="Telecom Fault Management API", version="1.0.0", lifespan=lifespan)
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",      # Vite dev server
+        "http://localhost:3000",       # Alternative dev server
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(RateLimiterMiddleware)
 
 register_exception_handlers(app)
+
+@app.get("/")
+def main_function():
+    return {"message": "Welcome to the Telecom Fault Management API!"}
 
 app.include_router(auth_router)
 app.include_router(ticket_router)
