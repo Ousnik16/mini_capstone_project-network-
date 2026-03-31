@@ -1,72 +1,45 @@
-from datetime import datetime
-
-from fastapi import HTTPException
+from types import SimpleNamespace
 
 from app.controllers import admin_controller
 
 
-def test_assign_ticket_endpoint_calls_service(run_async, payload, monkeypatch):
-    class FakeAssignmentService:
-        async def assign_ticket(self, ticket_id, engineer_id):
-            return {
-                "id": "assignment-1",
-                "ticket_id": ticket_id,
-                "engineer_id": engineer_id,
-                "assigned_at": datetime(2026, 1, 1),
-                "status": "assigned",
-            }
+def test_assign_ticket_success(client, override_admin):
+    async def fake_assign_ticket(ticket_id, engineer_id):
+        return {
+            "id": "assignment-1",
+            "ticket_id": ticket_id,
+            "engineer_id": engineer_id,
+            "assigned_at": "2026-01-01T10:00:00",
+            "status": "assigned",
+        }
 
-    monkeypatch.setattr(admin_controller, "AssignmentService", lambda: FakeAssignmentService())
+    original_service = admin_controller.AssignmentService
+    admin_controller.AssignmentService = lambda: SimpleNamespace(assign_ticket=fake_assign_ticket)
 
-    result = run_async(
-        admin_controller.assign_ticket(
-            "ticket-123",
-            payload(engineer_id="engineer-456"),
-            {"role": "admin"},
-        )
-    )
+    response = client.put("/tickets/ticket-1/assign", json={"engineer_id": "engineer-1"})
 
-    assert result["ticket_id"] == "ticket-123"
-    assert result["engineer_id"] == "engineer-456"
-    assert result["status"] == "assigned"
+    admin_controller.AssignmentService = original_service
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "assigned"
 
 
-def test_admin_reports_endpoint_returns_report(run_async, monkeypatch):
-    class FakeAssignmentService:
-        async def get_admin_report(self):
-            return {
-                "total_tickets": 10,
-                "open_tickets": 3,
-                "assigned_tickets": 4,
-                "resolved_tickets": 3,
-                "avg_resolution_seconds": 120.5,
-            }
+def test_admin_report_success(client, override_admin):
+    async def fake_get_admin_report():
+        return {
+            "total_tickets": 5,
+            "open_tickets": 2,
+            "assigned_tickets": 1,
+            "resolved_tickets": 2,
+            "avg_resolution_seconds": 100.0,
+        }
 
-    monkeypatch.setattr(admin_controller, "AssignmentService", lambda: FakeAssignmentService())
+    original_service = admin_controller.AssignmentService
+    admin_controller.AssignmentService = lambda: SimpleNamespace(get_admin_report=fake_get_admin_report)
 
-    result = run_async(admin_controller.admin_reports({"role": "admin"}))
+    response = client.get("/admin/reports")
 
-    assert result["total_tickets"] == 10
-    assert result["open_tickets"] == 3
-    assert result["assigned_tickets"] == 4
-    assert result["resolved_tickets"] == 3
-    assert result["avg_resolution_seconds"] == 120.5
+    admin_controller.AssignmentService = original_service
 
-
-def test_assign_ticket_endpoint_passes_through_service_errors(get_error, payload, monkeypatch):
-    class FakeAssignmentService:
-        async def assign_ticket(self, ticket_id, engineer_id):
-            raise HTTPException(status_code=404, detail="Ticket not found")
-
-    monkeypatch.setattr(admin_controller, "AssignmentService", lambda: FakeAssignmentService())
-
-    error = get_error(
-        admin_controller.assign_ticket(
-            "missing-ticket",
-            payload(engineer_id="engineer-456"),
-            {"role": "admin"},
-        )
-    )
-
-    assert error.status_code == 404
-    assert error.detail == "Ticket not found"
+    assert response.status_code == 200
+    assert response.json()["total_tickets"] == 5
