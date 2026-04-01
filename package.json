@@ -1,0 +1,32 @@
+{
+  "name": "mini-capstone-network-project",
+  "version": "1.0.0",
+  "description": "Mini Capstone Project - Network Management System",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && pip install -r requirements.txt",
+    "i": "npm run install:all",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd app && uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "echo 'Backend is built during deployment (Python app)'",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "cd frontend && npm run preview",
+    "start:backend": "cd app && uvicorn main:app --host 0.0.0.0 --port 8000",
+    "deploy": "npm run build && npm run start",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm run test",
+    "test:backend": "pytest tests/",
+    "lint": "cd frontend && npm run lint"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^9.8.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
