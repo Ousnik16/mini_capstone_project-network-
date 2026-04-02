@@ -11,20 +11,34 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import './App.css';
 
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+
+  const getDefaultDashboard = () => {
+    if (!isAuthenticated) return "/login";
+    switch (user?.role) {
+      case "customer":
+        return "/customer/dashboard";
+      case "engineer":
+        return "/engineer/dashboard";
+      case "admin":
+        return "/admin/dashboard";
+      default:
+        return "/login";
+    }
+  };
 
   return (
     <Routes>
 {}
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login />} />
-      <Route path="/register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
+      <Route path="/login" element={isAuthenticated ? <Navigate to={getDefaultDashboard()} /> : <Login />} />
+      <Route path="/register" element={isAuthenticated ? <Navigate to={getDefaultDashboard()} /> : <Register />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
 {}
       <Route
         path="/customer/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="customer">
             <CustomerDashboard />
           </ProtectedRoute>
         }
@@ -32,7 +46,7 @@ function AppRoutes() {
       <Route
         path="/engineer/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="engineer">
             <EngineerDashboard />
           </ProtectedRoute>
         }
@@ -40,7 +54,7 @@ function AppRoutes() {
       <Route
         path="/admin/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="admin">
             <AdminDashboard />
           </ProtectedRoute>
         }
@@ -51,7 +65,7 @@ function AppRoutes() {
         path="/"
         element={
           isAuthenticated ? (
-            <Navigate to="/customer/dashboard" />
+            <Navigate to={getDefaultDashboard()} />
           ) : (
             <Navigate to="/login" />
           )
@@ -59,7 +73,7 @@ function AppRoutes() {
       />
 
 {}
-      <Route path="*" element={<Navigate to="/" />} />
+      <Route path="*" element={<Navigate to={getDefaultDashboard()} />} />
     </Routes>
   );
 }
